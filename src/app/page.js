@@ -57,6 +57,21 @@ export default function Home() {
     }
   };
 
+  const completeTodo = async (id) => {
+    try {
+      const response = await axios.put("/api", {}, {
+        params: {
+          mongoId: id,
+        },
+      });
+  
+      toast.success(response.data.msg);
+      fetchTodos(); // Récupérer les todos après la mise à jour
+    } catch (error) {
+      toast.error("Erreur lors de la mise à jour du Todo");
+    }
+  };
+
   return (
     <>
       <form
@@ -83,28 +98,39 @@ export default function Home() {
         </button>
       </form>
 
-      <div className="relative overflow-x-auto mt-24 w-[60%] mx-auto">
+      <div className="relative overflow-x-auto mt-24 mb-10 w-[60%] mx-auto">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-              <th scope="col" className="px-6 py-3">Id</th>
-              <th scope="col" className="px-6 py-3">Title</th>
-              <th scope="col" className="px-6 py-3">Description</th>
-              <th scope="col" className="px-6 py-3">Status</th>
-              <th scope="col" className="px-6 py-3">Action</th>
+              <th scope="col" className="px-6 py-3">
+                Id
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Title
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Description
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Status
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Action
+              </th>
             </tr>
           </thead>
           <tbody>
             {todoData.map((todo, index) => {
               return (
                 <Todo
-                  key={index} 
-                  id={index+1} 
+                  key={index}
+                  id={index + 1}
                   title={todo.title}
                   description={todo.description}
                   complete={todo.isCompleted}
                   mongoId={todo._id}
                   deleteTodo={deleteTodo}
+                  completeTodo={completeTodo}
                 />
               );
             })}

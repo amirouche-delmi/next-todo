@@ -55,3 +55,28 @@ export async function DELETE(request) {
         return NextResponse.json({ msg: 'Failed to delete todo' }, { status: 500 });
     }
 }
+
+export async function PUT(request) {
+    await connectToDatabase();
+
+    const mongoId = request.nextUrl.searchParams.get('mongoId'); // Récupérer mongoId
+
+    if (!mongoId) {
+        return NextResponse.json({ msg: 'Todo ID is required' }, { status: 400 });
+    }
+
+    try {
+        const updatedTodo = await TodoModel.findByIdAndUpdate(mongoId, {
+            $set: { isCompleted: true }
+        });
+
+        if (!updatedTodo) {
+            return NextResponse.json({ msg: 'Todo not found' }, { status: 404 });
+        }
+
+        return NextResponse.json({ msg: 'Todo Completed' }); // Pas de retour du Todo mis à jour
+    } catch (error) {
+        console.error('Error updating todo:', error);
+        return NextResponse.json({ msg: 'Failed to update todo' }, { status: 500 });
+    }
+}
